@@ -127,7 +127,7 @@ variable "fgt_sku" {
   type = map(string)
   default = {
     byol = "fortinet_fg-vm"
-    payg = "fortinet_fg-vm_payg_2022"
+    payg = "fortinet_fg-vm_payg_2023"
   }
 }
 
@@ -150,7 +150,7 @@ variable "fgt_version" {
 variable "license_file" {
   // Change to your own byol license file, license.lic
   type    = string
-  default = "./licenses/license1.txt"
+  default = "./licenses/license1.lic"
 }
 
 // HTTPS Port

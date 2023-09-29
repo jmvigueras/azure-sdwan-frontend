@@ -18,7 +18,7 @@ module "fgt_zone_1" {
   admin_port     = local.admin_port
 
   license_type = local.license_type
-  license_file = "${local.license_path}license${count.index + 1}"
+  license_file = "${local.license_path}license${count.index + 1}.lic"
 
   fgt_version  = local.fgt_version
   size         = local.fgt_size
@@ -55,7 +55,7 @@ module "fgt_zone_2" {
   admin_port     = local.admin_port
 
   license_type = local.license_type
-  license_file = "${local.license_path}license${count.index + 1 + length(module.fgt_zone_1)}"
+  license_file = "${local.license_path}license${count.index + 1 + length(module.fgt_zone_1)}.lic"
 
   fgt_version  = local.fgt_version
   size         = local.fgt_size
