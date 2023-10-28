@@ -29,8 +29,8 @@ module "fgt_zone_1" {
   subnet_ids   = module.fgt_vnet.subnet_ids
   fgt_nsg_ids  = module.fgt_vnet.nsg_ids
 
-  config_fmg = true
-  config_faz = true
+  config_fmg = false
+  config_faz = false
 
   fmg_ip = local.fmg_ip
   faz_ip = local.faz_ip
@@ -66,8 +66,8 @@ module "fgt_zone_2" {
   subnet_ids   = module.fgt_vnet.subnet_ids
   fgt_nsg_ids  = module.fgt_vnet.nsg_ids
 
-  config_fmg = true
-  config_faz = true
+  config_fmg = false
+  config_faz = false
 
   fmg_ip = local.fmg_ip
   faz_ip = local.faz_ip
