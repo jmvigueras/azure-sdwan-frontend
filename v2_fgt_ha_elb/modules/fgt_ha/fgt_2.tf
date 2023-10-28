@@ -4,7 +4,7 @@
 resource "azurerm_virtual_machine" "fgt_2" {
   name                         = "${var.prefix}-${var.fgt_2_id}"
   location                     = var.location
-  zones                        = [var.zone]
+  zones                        = [var.zones[1]]
   resource_group_name          = var.resource_group_name
   network_interface_ids        = [local.fgt_2_ni_ids[var.fgt_ni_0], local.fgt_2_ni_ids[var.fgt_ni_1], local.fgt_2_ni_ids[var.fgt_ni_2]]
   primary_network_interface_id = local.fgt_2_ni_ids[var.fgt_ni_0]

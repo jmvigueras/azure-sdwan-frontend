@@ -1,8 +1,8 @@
 #------------------------------------------------------------------
 # Create FGT in zone 1
 #------------------------------------------------------------------
-module "fgt_zone_1" {
-  count  = local.fgt_number_zone1
+module "fgt_clusters" {
+  count  = local.fgt_cluster_number
   source = "./modules/fgt_ha"
 
   prefix                   = local.prefix
@@ -23,7 +23,7 @@ module "fgt_zone_1" {
 
   fgt_version  = local.fgt_version
   size         = local.fgt_size
-  zone         = local.location_zones[0]
+  zones        = local.location_zones
   fgt_1_id     = "ac-${count.index + 1}-fgt-1"
   fgt_2_id     = "ac-${count.index + 1}-fgt-2"
   fgt_cidrhost = count.index * 2 + 10
@@ -38,8 +38,8 @@ module "fgt_zone_1" {
   faz_ip = local.faz_ip
 }
 // Create load balancers
-module "elb_zone_1" {
-  count  = local.fgt_number_zone1
+module "elbs" {
+  count  = local.fgt_cluster_number
   source = "./modules/elb"
 
   prefix              = "${local.prefix}-ac-${count.index + 1}"
@@ -58,67 +58,6 @@ module "elb_zone_1" {
     "4500" = "Udp"
   }
 }
-#------------------------------------------------------------------
-# Create FGT in zone 2
-#------------------------------------------------------------------
-module "fgt_zone_2" {
-  count  = local.fgt_number_zone2
-  source = "./modules/fgt_ha"
-
-  prefix                   = local.prefix
-  suffix                   = count.index
-  location                 = local.location
-  resource_group_name      = local.resource_group_name == null ? azurerm_resource_group.rg[0].name : local.resource_group_name
-  tags                     = local.tags
-  storage-account_endpoint = local.storage-account_endpoint == null ? azurerm_storage_account.storageaccount[0].primary_blob_endpoint : local.storage-account_endpoint
-
-  admin_username = local.admin_username
-  admin_password = local.admin_password
-  admin_cidr     = local.admin_cidr
-  admin_port     = local.admin_port
-
-  license_type       = local.license_type
-  fgt_1_license_file = "${local.license_path}license${count.index * 2 + length(module.fgt_zone_1) * 2 + 1}.lic"
-  fgt_2_license_file = "${local.license_path}license${count.index * 2 + length(module.fgt_zone_1) * 2 + 2}.lic"
-
-  fgt_version  = local.fgt_version
-  size         = local.fgt_size
-  zone         = local.location_zones[1]
-  fgt_1_id     = "ac-${count.index + 1 + length(module.fgt_zone_1)}-fgt-1"
-  fgt_2_id     = "ac-${count.index + 1 + length(module.fgt_zone_1)}-fgt-2"
-  fgt_cidrhost = count.index * 2 + 10 + length(module.fgt_zone_1) * 2
-  subnet_cidrs = module.fgt_vnet.subnet_cidrs
-  subnet_ids   = module.fgt_vnet.subnet_ids
-  fgt_nsg_ids  = module.fgt_vnet.nsg_ids
-
-  config_fmg = true
-  config_faz = true
-
-  fmg_ip = local.fmg_ip
-  faz_ip = local.faz_ip
-}
-// Create load balancers
-module "elb_zone_2" {
-  count  = local.fgt_number_zone2
-  source = "./modules/elb"
-
-  prefix              = "${local.prefix}-ac-${count.index + 1 + length(module.fgt_zone_1)}"
-  location            = local.location
-  resource_group_name = local.resource_group_name == null ? azurerm_resource_group.rg[0].name : local.resource_group_name
-  tags                = local.tags
-
-  backend-probe_port = "8008"
-
-  vnet_fgt = module.fgt_vnet.vnet
-  fgt_1_ip = cidrhost(module.fgt_vnet.subnet_cidrs["public"], 10 + count.index * 2 + length(module.fgt_zone_1) * 2)
-  fgt_2_ip = cidrhost(module.fgt_vnet.subnet_cidrs["public"], 11 + count.index * 2 + length(module.fgt_zone_1) * 2)
-
-  elb_listeners = {
-    "500"  = "Udp"
-    "4500" = "Udp"
-  }
-}
-
 #------------------------------------------------------------------
 # Create vNET
 #------------------------------------------------------------------

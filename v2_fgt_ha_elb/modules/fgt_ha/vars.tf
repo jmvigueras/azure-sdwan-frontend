@@ -103,9 +103,9 @@ variable "location" {
   default = "francecentral"
 }
 
-variable "zone" {
-  type    = string
-  default = "1"
+variable "zones" {
+  type    = list(string)
+  default = ["1","2"]
 }
 
 // Azure resourcers tags
